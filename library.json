@@ -1,0 +1,15 @@
+{
+    "name": "HC_SR04",
+    "keywords": "HC-SR04, esp32, arduino, ultrasonic",
+    "description": "Synchron and asynchron readout of HC-SR04 sensors, supporting mutliple sensors using the same trigger",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/bjoernboeckle/HC_SR04.git"
+    },
+    "license": "MIT",
+    "version": "1.0.0",
+    "frameworks": "*",
+    "platforms": "*"
+  }
+  

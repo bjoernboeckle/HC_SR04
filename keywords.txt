@@ -1,0 +1,26 @@
+
+# Macros
+HC_SR04_ALL KEYWORD2
+HC_SR04_MASTER  KEYWORD2
+
+
+# Datatypes (KEYWORD1) 
+HC_SR04	KEYWORD1    DATA_TYPE
+HCSR04_State KEYWORD1   DATA_TYPE
+
+# Methods (KEYWORD2) 
+begin   KEYWORD2
+startMeasure   KEYWORD2
+getDuration_us   KEYWORD2
+getDist_cm   KEYWORD2
+getDist_mm   KEYWORD2
+getDist_inch   KEYWORD2
+HasTrigger   KEYWORD2
+getNumberOfSensors   KEYWORD2
+getState   KEYWORD2
+isFinished   KEYWORD2
+isInterruptSupported   KEYWORD2
+release   KEYWORD2
+beginAsync   KEYWORD2
+startAsync   KEYWORD2
+
