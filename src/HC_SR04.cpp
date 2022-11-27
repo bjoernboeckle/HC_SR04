@@ -1,4 +1,4 @@
-// HC_SR04_BASE - https://github.com/bjoernboeckle/HC_SR04_BASE
+// HC_SR04_BASE - https://github.com/bjoernboeckle/HC_SR04
 // Copyright © 2022, Björn Böckle
 // MIT License
 

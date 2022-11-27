@@ -21,6 +21,7 @@ void setup()
   sensor.beginAsync(HC_SR04_ALL);
 
   // start first measurement
+  sensor.startAsync(100000);
 }
 
 // main loop function

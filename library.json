@@ -1,6 +1,6 @@
 {
     "name": "HC_SR04",
-    "keywords": "HC-SR04, esp32, arduino, ultrasonic",
+    "keywords": "HC-SR04, esp32, arduino, ultrasonic, distance",
     "description": "Synchron and asynchron readout of HC-SR04 sensors, supporting mutliple sensors using the same trigger",
     "repository":
     {
