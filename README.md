@@ -64,8 +64,8 @@ to measure all four sensors.
 
 
 ### Multi sensor example (asynchron)
-Use four sensors with asynchron readout, startAsync only starts measurement. Whilemeasurement is running other tasks can be executed in main loop.
-Result are available when sonicMaster.isFinished() returns true.
+Use four sensors with asynchron readout, startAsync only starts measurement. While measurement is running other tasks can be executed in main loop.
+Results are available when sonicMaster.isFinished() returns true.
 Time required is the time tomeasure the sensor with the biggest distance. (~ 4 times faster then synchron paralell measurement)
 HC_SR04_ALL: execute command on all sensors. 0: master, 1..n number of slaves if only one sensor should be handled.
 
