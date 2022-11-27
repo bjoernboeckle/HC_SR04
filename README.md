@@ -59,10 +59,33 @@ to measure all four sensors.
 
     void loop() {
       sonicMaster.startMeasure(200000, HC_SR04_ALL);
-      for(int i=0; i<sonicMaster.getNumberOfSensors(); i++ ){
-        Serial.print(sonicMaster.getDist_cm());
-        Serial.println(" cm ");
-      }
+      for(int i=0; i<sonicMaster.getNumberOfSensors(); i++ ) { Serial.print(sonicMaster.getDist_cm()); Serial.println(" cm "); }
     }
 
 
+### Multi sensor example (asynchron)
+Use four sensors with asynchron readout, startAsync only starts measurement. Whilemeasurement is running other tasks can be executed in main loop.
+Result are available when sonicMaster.isFinished() returns true.
+Time required is the time tomeasure the sensor with the biggest distance. (~ 4 times faster then synchron paralell measurement)
+HC_SR04_ALL: execute command on all sensors. 0: master, 1..n number of slaves if only one sensor should be handled.
+
+    #include <Arduino.h>
+    #include <HC_SR04.h>
+
+    HC_SR04<3> sonicSlaveSharedTrigger1;     // using a 2nd sensor as slave with shared trigger pin
+    HC_SR04<4> sonicSlaveSharedTrigger2;     // using a 3rd sensor as slave with shared trigger pin
+    HC_SR04<5> sonicSlaveTrigger2(9);        // using a 4th sensor as slave with its own trigger pin
+
+    // define master sensor echo pin 2, trigger pin 8 and init with slaves
+    HC_SR04<2> sonicMaster(8, new HC_SR04_BASE *[3] { &sonicSlaveSharedTrigger1, &sonicSlaveSharedTrigger2, &sonicSlaveTrigger2 }, 3);
+
+    void setup() { Serial.begin(9600); sonicMaster.beginAsync(HC_SR04_ALL); }
+
+    void loop() {
+      if (sonicMaster.isFinished(HC_SR04_ALL)) {
+        sonicMaster.startMeasure(200000, HC_SR04_ALL);
+        for(int i=0; i<sonicMaster.getNumberOfSensors(); i++ ) { Serial.print(sonicMaster.getDist_cm()); Serial.println(" cm "); }
+      }
+
+      // do something usefull while measurement is running
+    }
