@@ -3,16 +3,12 @@
 // MIT License
 
 #include <Arduino.h>
-#include "HC_SR04.h"
+#include <HC_SR04.h>
 
 // define ECHO pins in case interrupt is not suported, beginAsync will return false
 // but the sensor can still be used synchron using startMeasure,
 // startAsync will be finisehd immediatly with a distance of 0
-#define ECHO 2
-#define TRIGGER  8
-
-
-HC_SR04<ECHO> sensor(TRIGGER);
+HC_SR04<2> sensor(8);
 
 
 // debug print buffer
@@ -21,13 +17,12 @@ void printSensorMeasurement();
 
 
 // Setup function
-void setup()
+void setup() 
 {
-  // put your setup code here, to run once:
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("Starting up...");
 
-  sensor.beginAsync(HC_SR04_ALL);
+  sensor.beginAsync();
    // show an error message in case sensor doesn't support interrupt
   if (!sensor.isInterruptSupported())
   {
@@ -46,7 +41,7 @@ void loop()
   // --------------------------------------------------------
   // perform a asynchronous measurement, sensor which doesn't support interrupt will have a 0 result
   // work can be done while measurmeent is runnig
-  // in case no pulse was measured, timeout will be elapsed (100ms)
+  // in case no pulse was measured, measurement is stopped after timeout (100ms)
   start = micros();
   sensor.startAsync(100000);
   while (!sensor.isFinished() )

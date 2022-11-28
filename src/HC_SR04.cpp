@@ -29,18 +29,18 @@ HC_SR04_BASE::HC_SR04_BASE(int echo, int trigger, HC_SR04_BASE *slaves[], int nu
 bool HC_SR04_BASE::begin(int slave)
 {
     if(isSlaveValid(slave))
-        return _slaves[slave-1]->begin();
+        return _slaves[slave-1]->begin(HC_SR04_ALL);
     else if ( slave == HC_SR04_ALL)
     {
-        bool bResult = begin();
+        bool bResult = begin(HC_SR04_MASTER);
         for (int i=0; i<_numSlaves; i++)
-            bResult &= _slaves[i]->begin();
+            bResult &= _slaves[i]->begin(HC_SR04_ALL);
         return bResult;
     }
 
     reset();
     pinMode(_echo, INPUT);
-    if (HasTrigger()) {
+    if (HasTrigger(HC_SR04_MASTER)) {
         pinMode(_trigger, OUTPUT);
         digitalWrite(_trigger, LOW);
     }
@@ -52,7 +52,7 @@ bool HC_SR04_BASE::begin(int slave)
 
 void HC_SR04_BASE::StartTrigger() 
 {
-    if (!HasTrigger())
+    if (!HasTrigger(HC_SR04_MASTER))
         return;
 
     digitalWrite(_trigger, LOW);
@@ -68,20 +68,20 @@ bool HC_SR04_BASE::startMeasure(unsigned long timeout, int slave)
     if(isSlaveValid(slave))
     {
         // Measure only a slave sensor, in case slave doesn't has an own trigger use the master trigger
-        if (!_slaves[slave-1]->HasTrigger())
+        if (!_slaves[slave-1]->HasTrigger(HC_SR04_MASTER))
             StartTrigger();        
-        return _slaves[slave-1]->startMeasure(HC_SR04_MASTER, timeout);
+        return _slaves[slave-1]->startMeasure(timeout, HC_SR04_ALL);
     }
     if (slave == HC_SR04_ALL)
     {
         // Measure all sensors, in case slave doesn't has an own trigger use the master trigger
-        bool bResult = startMeasure(timeout);
+        bool bResult = startMeasure(timeout, HC_SR04_MASTER);
         for (int i=0; i<_numSlaves; i++)
         {
             delay(1);  // small delay between subsequent measurements
-            if (!_slaves[i]->HasTrigger())
+            if (!_slaves[i]->HasTrigger(HC_SR04_MASTER))
                 StartTrigger();
-            bResult &= _slaves[i]->startMeasure(HC_SR04_MASTER, timeout);            
+            bResult &= _slaves[i]->startMeasure(timeout, HC_SR04_ALL);            
         }
         return bResult;
     }    
@@ -102,23 +102,23 @@ bool HC_SR04_BASE::startMeasure(unsigned long timeout, int slave)
 void HC_SR04_BASE::release(int slave)
 {
     if(isSlaveValid(slave))
-        return _slaves[slave-1]->release();
+        return _slaves[slave-1]->release(HC_SR04_ALL);
 
     if (slave == HC_SR04_ALL)
     {
-        release();
+        release(HC_SR04_MASTER);
         for (int i=0; i<_numSlaves; i++)
-            _slaves[i]->release();
+            _slaves[i]->release(HC_SR04_ALL);
         return;
     }
 
     reset();
-    if (HasTrigger())
+    if (HasTrigger(HC_SR04_MASTER))
         pinMode(_trigger, INPUT);
     pinMode(_echo, INPUT);
     _init = false;
 
-    if ( isInterruptSupported())
+    if ( isInterruptSupported(HC_SR04_MASTER))
     {
         int interruptPin = digitalPinToInterrupt(_echo);
         if (interruptPin != NOT_AN_INTERRUPT)
@@ -139,18 +139,18 @@ void HC_SR04_BASE::reset()
 bool HC_SR04_BASE::beginAsync(int slave)
 {
     if(isSlaveValid(slave))
-        return _slaves[slave-1]->beginAsync();
+        return _slaves[slave-1]->beginAsync(HC_SR04_ALL);
 
     if (slave == HC_SR04_ALL)
     {
         // beginn all sensors
-        bool bResult = beginAsync();
+        bool bResult = beginAsync(HC_SR04_MASTER);
         for (int i=0; i<_numSlaves; i++)
-            bResult &= _slaves[i]->beginAsync();
+            bResult &= _slaves[i]->beginAsync(HC_SR04_ALL);
         return bResult;
     }
 
-    begin();
+    begin(HC_SR04_MASTER);
 
     int interruptPin = digitalPinToInterrupt(_echo);
     if (interruptPin == NOT_AN_INTERRUPT)
@@ -164,16 +164,16 @@ bool HC_SR04_BASE::beginAsync(int slave)
 bool HC_SR04_BASE::startAsync(unsigned long timeout, int slave)
 {
     if(isSlaveValid(slave))
-        return _slaves[slave-1]->startAsync(HC_SR04_MASTER, timeout);
+        return _slaves[slave-1]->startAsync(timeout, HC_SR04_ALL);
 
     if (slave == HC_SR04_ALL)
     {
         // beginn all sensors
         bool bResult = true;
         for (int i=0; i<_numSlaves; i++)
-            bResult &= _slaves[i]->startAsync(HC_SR04_MASTER, timeout);
+            bResult &= _slaves[i]->startAsync(timeout, HC_SR04_ALL);
         // last master to trigger after all slaves are started
-        bResult &= startAsync(HC_SR04_MASTER, timeout);
+        bResult &= startAsync(timeout, HC_SR04_MASTER);
         return bResult;
     }
 
@@ -193,12 +193,12 @@ bool HC_SR04_BASE::startAsync(unsigned long timeout, int slave)
 bool HC_SR04_BASE::isFinished(int slave)
 {
     if(isSlaveValid(slave))
-        return _slaves[slave-1]->isFinished();
+        return _slaves[slave-1]->isFinished(HC_SR04_ALL);
     if (slave == HC_SR04_ALL)
     {
-        bool bFinished = isFinished();
+        bool bFinished = isFinished(HC_SR04_MASTER);
         for (int i=0; i<_numSlaves; i++)
-            bFinished &= _slaves[i]->isFinished();
+            bFinished &= _slaves[i]->isFinished(HC_SR04_ALL);
         return bFinished;
     }
 

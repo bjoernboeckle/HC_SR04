@@ -3,34 +3,22 @@
 // MIT License
 
 #include <Arduino.h>
-#include "HC_SR04.h"
+#include <HC_SR04.h>
 
-// ECHO and TRIGGER pin
-#define ECHO 2
-#define TRIGGER  8
+HC_SR04<2> sensor(8);   // sensor with echo and trigger pin
 
-HC_SR04<ECHO> sensor(TRIGGER); // sensor with echo and trigger pin
-char buffer[128];              // debug print buffer
-
-// Setup function
-void setup()
-{
-  // put your setup code here, to run once:
-  Serial.begin(115200);
-  Serial.println("Starting up...");
-  sensor.beginAsync(HC_SR04_ALL);
-
-  // start first measurement
-  sensor.startAsync(100000);
+void setup() { 
+  Serial.begin(9600); 
+  sensor.beginAsync();  
+  sensor.startAsync(100000);        // start first measurement
 }
 
 // main loop function
-void loop()
-{
-  if (sensor.isFinished())
-  {
-    sprintf(buffer, "Measured: %ld cm \t", sensor.getDist_cm());
-    Serial.println(buffer);
+void loop() {
+  if (sensor.isFinished()) {
+    Serial.println(sensor.getDist_cm());
+    delay(1000);
+
     sensor.startAsync(100000);
   }
 

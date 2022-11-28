@@ -15,32 +15,33 @@ enum HCSR04_State
   HCSR04_RUNNING
 };
 
-// defines to read all or only master (default for functions only master)
+// defines to read all or only master (default for read functions is all, master for data)
 #define HC_SR04_ALL    -1
 #define HC_SR04_MASTER  0
 
 class HC_SR04_BASE
 {
 public:
-  bool begin(int slave = HC_SR04_MASTER);
-  bool startMeasure(unsigned long timeout = 0, int slave = HC_SR04_MASTER);
+  bool begin(int slave = HC_SR04_ALL);
+  bool startMeasure(unsigned long timeout = 0, int slave = HC_SR04_ALL);
+
+  bool beginAsync(int slave = HC_SR04_ALL);
+  bool startAsync(unsigned long timeout = 0, int slave = HC_SR04_ALL );
+  bool isFinished(int slave = HC_SR04_ALL);
 
   unsigned long getDuration_us(int slave = HC_SR04_MASTER) { return isSlaveValid(slave) ? _slaves[slave-1]->getDuration_us() : _duration_us;}
+
   long getDist_cm(int slave = HC_SR04_MASTER)    { return isSlaveValid(slave) ? _slaves[slave-1]->getDist_cm() : (long)(_duration_us / 58.8235); }
   long getDist_mm(int slave = HC_SR04_MASTER)    { return isSlaveValid(slave) ? _slaves[slave-1]->getDist_mm() :(long)(_duration_us / 5.88235); }
   long getDist_inch(int slave = HC_SR04_MASTER)  { return isSlaveValid(slave) ? _slaves[slave-1]->getDist_inch() : (long)(_duration_us / 148.01864); } 
+
   bool HasTrigger(int slave = HC_SR04_MASTER)    { return isSlaveValid(slave) ? _slaves[slave-1]->HasTrigger(): _trigger >= 0;}
   int getNumberOfSensors() {return _numSlaves + 1; }  // slaves + master sensors
-
   HCSR04_State getState(int slave = HC_SR04_MASTER) {return isSlaveValid(slave) ? _slaves[slave-1]->getState() : _state; }
-
-  bool isFinished(int slave = HC_SR04_MASTER);
-
   bool isInterruptSupported(int slave = HC_SR04_MASTER) { return isSlaveValid(slave) ? _slaves[slave-1]->isInterruptSupported() : _interruptSupported; }
-  void release(int slave = HC_SR04_MASTER);
 
-  bool beginAsync(int slave = HC_SR04_MASTER);
-  bool startAsync(unsigned long timeout = 0, int slave = HC_SR04_MASTER );
+  void release(int slave = HC_SR04_ALL);
+
 
 protected:
   HC_SR04_BASE() {};

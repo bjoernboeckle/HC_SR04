@@ -1,65 +1,41 @@
-// HC_SR04_BASE - https://github.com/bjoernboeckle/HC_SR04_BASE
+// HC_SR04_BASE - https://github.com/bjoernboeckle/HC_SR04
 // Copyright © 2022, Björn Böckle
 // MIT License
 
 #include <Arduino.h>
-#include "HC_SR04.h"
+#include <HC_SR04.h>
 
-// define ECHO pins, in case interrupt is not suported, beginAsync will return false
-// but the sensor can still be used synchron using startMeasure,
-// startAsync will be finisehd immediatly with a distance of 0
-#define ECHO_1 2
-#define ECHO_2 3
-#define ECHO_3 4
-#define ECHO_4 5
-
-// trigger pins
-#define TRIGGER_1 8
-#define TRIGGER_4 11
-
-HC_SR04<ECHO_2> sonicSlaveSharedTrigger1;       // using a 2nd sensor as slave with shared trigger pin
-HC_SR04<ECHO_3> sonicSlaveSharedTrigger2;       // using a 3rd sensor as slave with shared trigger pin
-HC_SR04<ECHO_4> sonicSlaveTrigger2(TRIGGER_4);  // using a 4thsensor as slave with its own trigger pin
-
-// define master sensor and init with slaves
-#define NUM_SLAVES 3
-HC_SR04<ECHO_1> sonicMaster(TRIGGER_1, new HC_SR04_BASE *[NUM_SLAVES] { &sonicSlaveSharedTrigger1, &sonicSlaveSharedTrigger2, &sonicSlaveTrigger2 }, NUM_SLAVES);
-
-// debug print buffer
-char buffer[128];
-void printSensorMeasurements();
+// Sensor / Arduino Pin mapping
+//             |  Echo  |  Trigger
+// Sensor 1:   |   2    |     8
+// Sensor 2:   |   3    |     8
+// Sensor 3:   |   4    |     8
+// Sensor 4:   |   5    |    11
+HC_SR04_BASE *Slaves[] = { new HC_SR04<3>(), new HC_SR04<4>(), new HC_SR04<5>(11) };
+HC_SR04<2> sonicMaster(8, Slaves, 3);
 
 // Setup function
 void setup()
 {
   // put your setup code here, to run once:
-  Serial.begin(115200);
-  Serial.println("Starting up...");
+  Serial.begin(9600);
 
   // begin all sensors as asynchron, they can still be used synchron
-  // in case one sensor doesn't suport interrupt the function returns false
-  sonicMaster.begin(HC_SR04_ALL);
+  // in case one of echo pin doesn't suport interrupt the function returns false
+  sonicMaster.begin();
 }
 
 
 // main loop function
 void loop()
 {
-  sonicMaster.startMeasure(200000, HC_SR04_ALL);
-  printSensorMeasurements();
+  sonicMaster.startMeasure(200000);
+  for (int i = 0; i < sonicMaster.getNumberOfSensors(); i++) {
+    Serial.print(sonicMaster.getDist_cm(i));
+    Serial.print("  ");
+  }
+  Serial.println();
   delay(1000);
 }
 
 
-
-// helper to print measured data for all sensors
-void printSensorMeasurements()
-{
-  Serial.print("Measured: ");
-  for (int i = 0; i < sonicMaster.getNumberOfSensors(); i++)
-  {
-    sprintf(buffer, "%i: %ld cm \t", i, sonicMaster.getDist_cm(i));
-    Serial.print(buffer);
-  }
-  Serial.println();
-}

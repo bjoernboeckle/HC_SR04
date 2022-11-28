@@ -8,6 +8,9 @@ FUNCTIONS
 ==================================
 begin	KEYWORD2
 startMeasure	KEYWORD2
+beginAsync	KEYWORD2
+startAsync	KEYWORD2
+isFinished	KEYWORD2
 getDuration_us	KEYWORD2
 getDist_cm	KEYWORD2
 getDist_mm	KEYWORD2
@@ -15,11 +18,8 @@ getDist_inch	KEYWORD2
 HasTrigger	KEYWORD2
 getNumberOfSensors	KEYWORD2
 getState	KEYWORD2
-isFinished	KEYWORD2
 isInterruptSupported	KEYWORD2
 release	KEYWORD2
-beginAsync	KEYWORD2
-startAsync	KEYWORD2
 
 ==================================
 CONSTANTS
