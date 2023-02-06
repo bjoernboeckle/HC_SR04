@@ -30,7 +30,7 @@ void loop() {
 
 # Usage
 
-Initialize with echo pin (2) and trigger pin (8). In case asynchron measuremnt should be used the echo pin must support interrupts.
+Initialize with echo pin (2) and trigger pin (8). In case asynchron measurement should be used the echo pin must support interrupts.
 
 ```c++
 HC_SR04<2> sensor(8);
